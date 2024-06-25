@@ -30,7 +30,7 @@ function SignUp() {
       // Parse the response body as json. This converts the response data into javascript object that
       // the we can work with in our code
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       setLoading(false);
       if (!data.success) {
         setError(false);
