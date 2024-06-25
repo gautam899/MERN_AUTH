@@ -11,7 +11,7 @@ export const signup = async (req, res, next) => {
     await newUser.save();
     res.status(201).json({ message: "User Created Successfully" });
   } catch (error) {
-    next.error();
+    next(error);
     // This way we are signalling the global error middleware that an error has occurred.
   }
 };
