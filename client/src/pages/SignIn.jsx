@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user); //We named the state as user in userSlice.
-  console.log(loading,error);
+  // console.log(loading,error);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // So instead of handling the change in the input feild indivisually
