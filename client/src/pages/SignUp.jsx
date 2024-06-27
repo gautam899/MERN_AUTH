@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   // So instead of handling the change in the input feild indivisually
   // but rather we can do it all in one handler function
   const handleChange = (e) => {
@@ -32,10 +33,11 @@ function SignUp() {
       const data = await res.json();
       // console.log(data);
       setLoading(false);
-      if (!data.success) {
-        setError(false);
+      if (data.success === false) {
+        setError(true);
         return;
       }
+      navigate("/sign-in");
     } catch (error) {
       setLoading(false);
       setError(true);
