@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 function Header() {
+  const { currentUser } = useSelector((state) => state.user);
   return (
     <header className="bg-slate-200">
       <nav className="flex justify-between max-w-6xl items-center px-10 py-5">
@@ -14,13 +15,19 @@ function Header() {
             <li className="font-semibold p-4 hover:text-slate-400">Home</li>
           </Link>
 
-          <Link to="about">
-            {" "}
+          <Link to="/about">
             <li className="font-semibold p-4 hover:text-slate-400">About</li>
           </Link>
-          <Link to="sign-in">
-            {" "}
-            <li className="font-semibold p-4 hover:text-slate-400">SignIn</li>
+          <Link to="/profile">
+            {currentUser ? (
+              <img
+                src={currentUser.profilePicture}
+                alt="profile"
+                className="h-12 w-12 rounded-full object-cover"
+              />
+            ) : (
+              <li className="font-semibold p-4 hover:text-slate-400">SignIn</li>
+            )}
           </Link>
         </ul>
       </nav>

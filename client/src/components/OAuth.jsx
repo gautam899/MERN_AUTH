@@ -16,7 +16,7 @@ function OAuth() {
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: result.user.displayName,
@@ -26,7 +26,6 @@ function OAuth() {
       });
       const data = await res.json();
       dispatch(signInSuccess(data));
-      navigate("/");
     } catch (err) {
       console.log("Could not log in with google: ", err);
     }
