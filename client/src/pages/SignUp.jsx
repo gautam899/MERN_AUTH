@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
-function SignUp() {
+export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -84,7 +84,7 @@ function SignUp() {
       <div className="flex gap-2 mt-5">
         <p>Have an account? </p>
         <Link to="/sign-in">
-          <span className="text-blue-500">SignIn</span>
+          <span className="text-blue-500">Sign In</span>
         </Link>
       </div>
       <p className="text-red-700 mt-5 text-bold p-5">
@@ -93,5 +93,3 @@ function SignUp() {
     </div>
   );
 }
-
-export default SignUp;

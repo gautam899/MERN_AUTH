@@ -10,12 +10,22 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-function Profile() {
+export default function Profile() {
+  // A peice of state to set the new image
   const [image, setImage] = useState(undefined);
-  const { currentUser } = useSelector((state) => state.user);
+  // Since we want the choose image window to appear when we click on the image
+  //we will attach a ref to the input of type file
   const fileRef = useRef(null);
+  // We also need to get the current user.
+  const { currentUser } = useSelector((state) => state.user);
+  // To display the image percentage below the image to make the website more
+  // interative we need a state to store the snapshot of percentage of image uploaded at every moment before it is uploaded 100%.
   const [imagePercent, setImagePercent] = useState(0);
+  // Just for convinience we are creating a state to keep store of the error that might occur when we are uploading the
+  // image. Let's say if the image size is greater than what is acceptable i.e 2MB we want to keep and error
   const [imageError, setImageError] = useState(false);
+  // Also since we are updating the user profile we need a state to keep the formdata and 
+  // a function to update the new form data.
   const [formData, setFormData] = useState({});
   // console.log(formData);
   useEffect(() => {
@@ -23,6 +33,7 @@ function Profile() {
       handleFileUpload(image);
     }
   }, [image]);
+
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + image.name;
@@ -68,7 +79,7 @@ function Profile() {
               Error Uploading Image (file size must be less than 2 MB)
             </span>
           ) : imagePercent > 0 && imagePercent < 100 ? (
-            <span className="text-slate-700">{`Uploading Image...${imagePercent} %`}</span>
+            <span className="text-slate-700">{`Uploading: ${imagePercent} %`}</span>
           ) : imagePercent === 100 ? (
             <span className="text-green-700">Image uploaded successfully</span>
           ) : (
@@ -76,23 +87,23 @@ function Profile() {
           )}
         </p>
         <input
-          defaultValue={currentUser.email}
+          defaultValue={currentUser.username}
           type="text"
           id="username"
-          placeholder="username"
+          placeholder="Username"
           className="bg-slate-100 rounded-lg p-3"
         />
         <input
-          defaultValue={currentUser.username}
+          defaultValue={currentUser.email}
           type="email"
           id="email"
-          placeholder="username"
+          placeholder="Email"
           className="bg-slate-100 rounded-lg p-3"
         />
         <input
           type="password"
           id="password"
-          placeholder="username"
+          placeholder="Password"
           className="bg-slate-100 rounded-lg p-3"
         />
         <button className="bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">
@@ -106,5 +117,3 @@ function Profile() {
     </div>
   );
 }
-
-export default Profile;

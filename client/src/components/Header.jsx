@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-function Header() {
+export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   return (
     <header className="bg-slate-200">
-      <nav className="flex justify-between max-w-6xl items-center px-10 py-5">
+      <nav className="flex justify-between max-w-6xl items-center px-10 mx-auto py-5">
         <Link to="/">
           <h1 className="font-bold text-2xl text-black">Auth App</h1>
         </Link>
@@ -35,4 +34,4 @@ function Header() {
   );
 }
 
-export default Header;
+

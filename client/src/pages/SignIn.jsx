@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   signInStart,
@@ -9,7 +9,7 @@ import {
 } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../components/OAuth";
-function SignIn() {
+export default function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user); //We named the state as user in userSlice.
   // console.log(loading,error);
@@ -86,7 +86,7 @@ function SignIn() {
       <div className="flex gap-2 mt-5">
         <p>Dont have a account? </p>
         <Link to="/sign-up">
-          <span className="text-blue-500">SignUp</span>
+          <span className="text-blue-500">Sign Up</span>
         </Link>
       </div>
       <p className="text-red-700 mt-5 text-bold p-5">
@@ -94,6 +94,4 @@ function SignIn() {
       </p>
     </div>
   );
-}
-
-export default SignIn;
+} 

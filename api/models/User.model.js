@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { type } from "os";
 // Create a new schema for one particular user
 const userSchema = new mongoose.Schema(
   {

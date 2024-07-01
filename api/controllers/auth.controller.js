@@ -22,7 +22,7 @@ export const signin = async (req, res, next) => {
   // first we need the email and password to verify that input to verify the person
   const { email, password } = req.body;
   try {
-    const validUser = await User.findOne({ email: email });
+    const validUser = await User.findOne({ email });
     if (!validUser) {
       return next(errorHandler(404, "User Not found!!"));
     }
