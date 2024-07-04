@@ -16,6 +16,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserFailure,
+  signOut,
 } from "../redux/user/userSlice";
 export default function Profile() {
   // A peice of state to set the new image
@@ -82,7 +85,7 @@ export default function Profile() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (data.success == false) {
+      if (data.success === false) {
         dispatch(updateUserFailure(data));
         return;
       }
@@ -90,6 +93,29 @@ export default function Profile() {
       setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error));
+    }
+  };
+  const handleDeleteAccount = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data));
+        return;
+      }
+    } catch (error) {
+      dispatch(deleteUserFailure(error));
+    }
+  };
+  const handleSignOut = async () => {
+    try {
+      await fetch("api/auth/signout");
+      dispatch(signOut());
+    } catch (err) {
+      console.log(err);
     }
   };
   return (
@@ -146,14 +172,18 @@ export default function Profile() {
           onChange={handleChange}
         />
         <button className="bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">
-          {loading ? "Loading":"Update"}
+          {loading ? "Loading" : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700">Delete Account</span>
-        <span className="text-red-700">Sign Out</span>
+        <span onClick={handleDeleteAccount} className="text-red-700">
+          Delete Account
+        </span>
+        <span onClick={handleSignOut} className="text-red-700">
+          Sign Out
+        </span>
       </div>
-      <p className="text-red-700 mt-5">{error && "Something wnet wrong!!"}</p>
+      <p className="text-red-700 mt-5">{error && "Something went wrong!!"}</p>
       <p className="text-green-700 mt-5">
         {updateSuccess && "User is updated successfully!!"}
       </p>
