@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
@@ -10,24 +11,33 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import { useDispatch } from "react-redux";
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+} from "../redux/user/userSlice";
 export default function Profile() {
   // A peice of state to set the new image
   const [image, setImage] = useState(undefined);
+  const dispatch = useDispatch();
   // Since we want the choose image window to appear when we click on the image
-  //we will attach a ref to the input of type file
+  // we will attach a ref to the input of type file
   const fileRef = useRef(null);
   // We also need to get the current user.
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   // To display the image percentage below the image to make the website more
   // interative we need a state to store the snapshot of percentage of image uploaded at every moment before it is uploaded 100%.
   const [imagePercent, setImagePercent] = useState(0);
   // Just for convinience we are creating a state to keep store of the error that might occur when we are uploading the
   // image. Let's say if the image size is greater than what is acceptable i.e 2MB we want to keep and error
   const [imageError, setImageError] = useState(false);
-  // Also since we are updating the user profile we need a state to keep the formdata and 
+  // Also since we are updating the user profile we need a state to keep the formdata and
   // a function to update the new form data.
   const [formData, setFormData] = useState({});
   // console.log(formData);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+
   useEffect(() => {
     if (image) {
       handleFileUpload(image);
@@ -56,10 +66,36 @@ export default function Profile() {
       }
     );
   };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+  // console.log(formData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success == false) {
+        dispatch(updateUserFailure(data));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error));
+    }
+  };
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form action="" className="flex flex-col gap-4">
+      <form action="" className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           className="hidden"
           type="file"
@@ -92,6 +128,7 @@ export default function Profile() {
           id="username"
           placeholder="Username"
           className="bg-slate-100 rounded-lg p-3"
+          onChange={handleChange}
         />
         <input
           defaultValue={currentUser.email}
@@ -99,21 +136,27 @@ export default function Profile() {
           id="email"
           placeholder="Email"
           className="bg-slate-100 rounded-lg p-3"
+          onChange={handleChange}
         />
         <input
           type="password"
           id="password"
           placeholder="Password"
           className="bg-slate-100 rounded-lg p-3"
+          onChange={handleChange}
         />
         <button className="bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">
-          Update
+          {loading ? "Loading":"Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
         <span className="text-red-700">Delete Account</span>
         <span className="text-red-700">Sign Out</span>
       </div>
+      <p className="text-red-700 mt-5">{error && "Something wnet wrong!!"}</p>
+      <p className="text-green-700 mt-5">
+        {updateSuccess && "User is updated successfully!!"}
+      </p>
     </div>
   );
 }
