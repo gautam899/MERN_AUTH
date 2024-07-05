@@ -15,15 +15,19 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
 export default function App() {
-  const [themeMode, setThemeMode] = useState("light");
+  const [themeMode, setThemeMode] = useState(
+    localStorage.getItem("theme") || "light"
+  );
   // Now to add functionality in the method that we have defined in the
   //context what we need to do here is we need to declare function with
   //same name as in the context and the functionality will be automatically added in those functions.
   const lightTheme = () => {
     setThemeMode("light");
+    localStorage.setItem("theme", "light"); // Save theme preference
   };
   const darkTheme = () => {
     setThemeMode("dark");
+    localStorage.setItem("theme", "dark"); // Save theme preference
   };
 
   //But how do we change the theme
