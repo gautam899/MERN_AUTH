@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { showFailedAlert, showSuccessAlert } from "../utils/toastifyAlert";
+
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
@@ -36,8 +38,10 @@ export default function SignUp() {
       setLoading(false);
       if (data.success === false) {
         setError(true);
+        showFailedAlert("Email Already Exist!!");
         return;
       }
+      showSuccessAlert("Sign Up Successfull!!");
       navigate("/sign-in");
     } catch (error) {
       setLoading(false);
@@ -46,50 +50,51 @@ export default function SignUp() {
   };
 
   return (
-    <div className="p-3 max-w-lg mx-auto">
-      <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="text"
-          placeholder="Username"
-          className="bg-slate-200 p-3 rounded-lg border-none outline-none"
-          id="username"
-          required
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          className="bg-slate-200 p-3 rounded-lg border-none outline-none"
-          id="email"
-          required
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="bg-slate-200 p-3 rounded-lg border-none outline-none"
-          id="password"
-          required
-          onChange={handleChange}
-        />
-        <button
-          disabled={loading}
-          className="font-bold bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
-        >
-          {loading ? "Loading..." : "Sign Up"}
-        </button>
-        <OAuth/>
-      </form>
-      <div className="flex gap-2 mt-5">
-        <p>Have an account? </p>
-        <Link to="/sign-in">
-          <span className="text-blue-500">Sign In</span>
-        </Link>
+    <div className="w-full h-[100vh] dark:bg-slate-500">
+      <div className="p-3 max-w-lg mx-auto">
+        <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Username"
+            className="bg-slate-200 p-3 rounded-lg border-none outline-none dark:placeholder-gray-600"
+            id="username"
+            required
+            onChange={handleChange}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            className="bg-slate-200 p-3 rounded-lg border-none outline-none dark:placeholder-gray-600"
+            id="email"
+            required
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="bg-slate-200 p-3 rounded-lg border-none outline-none dark:placeholder-gray-600"
+            id="password"
+            required
+            onChange={handleChange}
+          />
+          <button
+            disabled={loading}
+            className="font-bold bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+          >
+            {loading ? "Loading..." : "Sign Up"}
+          </button>
+          <OAuth />
+        </form>
+        <div className="flex gap-2 mt-5">
+          <p>Have an account? </p>
+          <Link to="/sign-in">
+            <span className="text-blue-500 dark:text-red-700 dark:font-bold">
+              Sign In
+            </span>
+          </Link>
+        </div>
       </div>
-      <p className="text-red-700 mt-5 text-bold p-5">
-        {error && "Something went wrong....."}
-      </p>
     </div>
   );
 }

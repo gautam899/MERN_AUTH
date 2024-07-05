@@ -19,7 +19,10 @@ import {
   deleteUserStart,
   deleteUserFailure,
   signOut,
+  deleteUserSuccess,
 } from "../redux/user/userSlice";
+import { showFailedAlert, showSuccessAlert } from "../utils/toastifyAlert";
+
 export default function Profile() {
   // A peice of state to set the new image
   const [image, setImage] = useState(undefined);
@@ -61,12 +64,19 @@ export default function Profile() {
       },
       (error) => {
         setImageError(true);
+        showFailedAlert("Size of image must be less than 2mb!!");
+        // showFailedAlert(error.message);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, profilePicture: downloadURL })
-        );
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData({ ...formData, profilePicture: downloadURL });
+          showSuccessAlert("Image Uploaded Successfully");
+        });
       }
+      // getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+      //   setFormData({ ...formData, profilePicture: downloadURL });
+      //   showSuccessAlert("Image Uploaded Successfully");
+      // })
     );
   };
   const handleChange = (e) => {
@@ -90,8 +100,10 @@ export default function Profile() {
         return;
       }
       dispatch(updateUserSuccess(data));
+      showSuccessAlert("User updated successfully!!");
       setUpdateSuccess(true);
     } catch (error) {
+      showFailedAlert(error.message);
       dispatch(updateUserFailure(error));
     }
   };
@@ -106,87 +118,96 @@ export default function Profile() {
         dispatch(deleteUserFailure(data));
         return;
       }
+      dispatch(deleteUserSuccess(data));
+      showSuccessAlert("User deleted successfully");
     } catch (error) {
       dispatch(deleteUserFailure(error));
+      showFailedAlert("Some error occured!!");
     }
   };
   const handleSignOut = async () => {
     try {
       await fetch("api/auth/signout");
       dispatch(signOut());
+      showSuccessAlert("Sign out successfull!!");
     } catch (err) {
       console.log(err);
+      showFailedAlert("Something went wrong!!");
     }
   };
   return (
-    <div className="p-3 max-w-lg mx-auto">
-      <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form action="" className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <input
-          className="hidden"
-          type="file"
-          ref={fileRef}
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
-        />
-        <img
-          src={formData.profilePicture || currentUser.profilePicture}
-          alt="profile"
-          className="h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2"
-          onClick={() => fileRef.current.click()}
-        />
-        <p className="text-sm self-center">
-          {imageError ? (
-            <span className="text-red-700">
-              Error Uploading Image (file size must be less than 2 MB)
-            </span>
-          ) : imagePercent > 0 && imagePercent < 100 ? (
-            <span className="text-slate-700">{`Uploading: ${imagePercent} %`}</span>
-          ) : imagePercent === 100 ? (
-            <span className="text-green-700">Image uploaded successfully</span>
-          ) : (
-            ""
-          )}
-        </p>
-        <input
-          defaultValue={currentUser.username}
-          type="text"
-          id="username"
-          placeholder="Username"
-          className="bg-slate-100 rounded-lg p-3"
-          onChange={handleChange}
-        />
-        <input
-          defaultValue={currentUser.email}
-          type="email"
-          id="email"
-          placeholder="Email"
-          className="bg-slate-100 rounded-lg p-3"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          className="bg-slate-100 rounded-lg p-3"
-          onChange={handleChange}
-        />
-        <button className="bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">
-          {loading ? "Loading" : "Update"}
-        </button>
-      </form>
-      <div className="flex justify-between mt-5">
-        <span onClick={handleDeleteAccount} className="text-red-700">
-          Delete Account
-        </span>
-        <span onClick={handleSignOut} className="text-red-700">
-          Sign Out
-        </span>
+    <div className="w-[100%] h-[100vh] dark:bg-slate-500">
+      <div className="p-3 max-w-lg mx-auto">
+        <h1 className="text-3xl font-semibold text-center my-7 dark:text-white">
+          Profile
+        </h1>
+        <form action="" className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <input
+            className="hidden"
+            type="file"
+            ref={fileRef}
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
+          />
+          <img
+            src={formData.profilePicture || currentUser.profilePicture}
+            alt="profile"
+            className="h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2"
+            onClick={() => fileRef.current.click()}
+          />
+          <p className="text-sm self-center">
+            {imageError ? (
+              <></>
+            ) : imagePercent > 0 && imagePercent < 100 ? (
+              <span className="text-slate-700 dark:text-white">{`Uploading: ${imagePercent} %`}</span>
+            ) : imagePercent === 100 ? (
+              <></>
+            ) : (
+              ""
+            )}
+          </p>
+          <input
+            defaultValue={currentUser.username}
+            type="text"
+            id="username"
+            placeholder="Username"
+            className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
+          />
+          <input
+            defaultValue={currentUser.email}
+            type="email"
+            id="email"
+            placeholder="Email"
+            className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
+          />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
+          />
+          <button className="bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">
+            {loading ? "Loading" : "Update"}
+          </button>
+        </form>
+        <div className="flex justify-between mt-5">
+          <span
+            onClick={handleDeleteAccount}
+            className="text-red-700 dark:font-bold dark:text-lg cursor-pointer hover:scale-[1.1]"
+          >
+            Delete Account
+          </span>
+          <span
+            onClick={handleSignOut}
+            className="text-red-700 dark:font-bold dark:text-lg cursor-pointer hover:scale-[1.1]"
+          >
+            Sign Out
+          </span>
+        </div>
       </div>
-      <p className="text-red-700 mt-5">{error && "Something went wrong!!"}</p>
-      <p className="text-green-700 mt-5">
-        {updateSuccess && "User is updated successfully!!"}
-      </p>
     </div>
   );
 }
