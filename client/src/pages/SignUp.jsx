@@ -38,7 +38,7 @@ export default function SignUp() {
       setLoading(false);
       if (data.success === false) {
         setError(true);
-        showFailedAlert("Email Already Exist!!");
+        showFailedAlert(data.message);
         return;
       }
       showSuccessAlert("Sign Up Successfull!!");
